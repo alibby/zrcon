@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     zrcon (0.0.1)
-      dotenv
+      dotenv (~> 2.2)
 
 GEM
   remote: https://rubygems.org/
@@ -33,9 +33,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  pry
-  rake
-  rspec
+  pry (~> 0.11)
+  rake (~> 12.3)
+  rspec (~> 3.7)
   zrcon!
 
 BUNDLED WITH
