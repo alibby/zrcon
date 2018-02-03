@@ -29,12 +29,40 @@ describe Zrcon do
       let(:port) { 1234 }
       let(:password) { 'wifesbirthday' }
 
-      subject { described_class.new host, port, password }
+      subject { described_class.new host: host, port: port, password: password }
 
       it "should use params" do
         expect(subject.host).to eq host
         expect(subject.port).to eq port
         expect(subject.password).to eq password
+      end
+    end
+  end
+
+  describe '#conn' do
+    subject { rcon.conn }
+
+    context "when the hostname is bad" do
+      before { expect(TCPSocket).to receive(:new).and_raise(SocketError) }
+
+      it "should raise connect error" do
+        expect { subject }.to raise_error(Zrcon::ConnectError, "bad hostname perhaps? (#{rcon.host})")
+      end
+    end
+
+    context "when the server drops our packets" do
+      before { expect(TCPSocket).to receive(:new).and_raise(Errno::ETIMEDOUT) }
+
+      it "should raise conect error" do
+        expect { subject }.to raise_error(Zrcon::ConnectError, "timed out connecting to #{rcon.host}:#{rcon.port}")
+      end
+    end
+
+    context "when the connection is refused" do
+      before { expect(TCPSocket).to receive(:new).and_raise(Errno::ECONNREFUSED) }
+
+      it "should raise conect error" do
+        expect { subject }.to raise_error(Zrcon::ConnectError, "connection refused")
       end
     end
   end

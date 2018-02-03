@@ -2,12 +2,32 @@
 
 require 'bundler/setup'
 require 'dotenv'
+require 'optionparser'
+require 'ostruct'
+
 require_relative '../lib/zrcon'
 
 Dotenv.load
 
-rcon = Zrcon.new
+options = OpenStruct.new(
+  host: ENV['RCON_HOST'],
+  port: ENV['RCON_PORT'],
+  password: ENV['RCON_PASSWORD']
+)
 
-rcon.auth
-puts rcon.command(ARGV.first || "help")
+OptionParser.new { |opts|
+  opts.banner = "Usage: zrcon..."
+  opts.on("-hHOSTNAME", "--host=HOSTNAME", "hostname of rcon server") { |value| options.host = value }
+  opts.on("-pPORT", "--port=PORT", "tcp port") { |value| options.port = value.to_i }
+  opts.on("-PPASS", "--password=PASS", "rcon password") { |value| options.password = value }
+}.parse!
+
+begin
+  rcon = Zrcon.new options.to_h
+  rcon.auth
+
+  puts rcon.command(ARGV.join(' '))
+rescue Zrcon::ConnectError => e
+  puts "Connect error: #{e}"
+end
 
