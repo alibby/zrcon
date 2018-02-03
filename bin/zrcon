@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
+require 'dotenv'
+require_relative '../lib/zrcon'
+
+Dotenv.load
+
+rcon = Zrcon.new
+
+rcon.auth
+puts rcon.command(ARGV.first || "help")
+
