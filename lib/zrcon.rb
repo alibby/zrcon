@@ -4,9 +4,11 @@ require_relative 'zrcon/packet'
 require_relative 'zrcon/version'
 
 class Zrcon
+  ConnectError = Class.new(StandardError)
+
   attr_accessor :host, :port, :password
 
-  def initialize(host=ENV['RCON_HOST'], port=ENV['RCON_PORT'], password=ENV['RCON_PASSWORD'])
+  def initialize(host: ENV['RCON_HOST'], port: ENV['RCON_PORT'], password: ENV['RCON_PASSWORD'])
     @host = host.to_s
     @port = port.to_i
     @password = password.to_s
@@ -27,11 +29,16 @@ class Zrcon
     response.data
   end
 
-  private
-
   def conn
     @conn ||= TCPSocket.new host, port
+  rescue SocketError
+    raise ConnectError.new "bad hostname perhaps? (#{host})"
+  rescue Errno::ETIMEDOUT
+    raise ConnectError.new "timed out connecting to #{host}:#{port}"
+  rescue Errno::ECONNREFUSED
+    raise ConnectError.new "connection refused"
   end
+
 
   def next_id
     @id ||= 0
