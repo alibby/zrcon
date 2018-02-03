@@ -16,8 +16,8 @@ Gem::Specification.new do |s|
   s.homepage    = 'https://github.com/alibby/rcon'
   s.license     = 'MIT'
 
-  s.add_dependency "dotenv"
-  s.add_development_dependency "pry"
-  s.add_development_dependency "rspec"
-  s.add_development_dependency "rake"
+  s.add_dependency "dotenv", "~> 2.2"
+  s.add_development_dependency "pry", "~> 0.11"
+  s.add_development_dependency "rspec", "~> 3.7"
+  s.add_development_dependency "rake", "~> 12.3"
 end
