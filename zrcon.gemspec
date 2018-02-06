@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Andrew Libby"]
   s.email       = 'alibby@andylibby.org'
   s.files       = Dir[ 'bin/*',  'lib/**/*.rb' ]
-  s.homepage    = 'https://github.com/alibby/rcon'
+  s.homepage    = 'https://github.com/alibby/zrcon'
   s.license     = 'MIT'
 
   s.add_dependency "dotenv", "~> 2.2"
