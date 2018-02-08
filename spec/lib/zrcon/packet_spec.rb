@@ -18,18 +18,18 @@ describe Zrcon::Packet do
 
     context "subsequent constructor calls" do
       before do
-        described_class.class_variable_set :@@id, 0
+        described_class.instance_variable_set :@id, -1
       end
 
       it "should increment the id" do
-        expect(subject.id).to eq 1
+        expect(subject.id).to eq 0
       end
     end
 
     context "when passed options" do
       let(:id) { 1234 }
       let(:type) { 3 }
-      let(:data) { "data"}
+      let(:data) { "data" }
 
       subject { described_class.new id: id, type: type, data: data }
 
@@ -89,4 +89,3 @@ describe Zrcon::Packet do
     end
   end
 end
-

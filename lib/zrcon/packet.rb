@@ -9,23 +9,27 @@ class Zrcon
     end
 
     def next_id
-      @@id ||= -1
-      @@id += 1
+      self.class.next_id
+    end
+
+    def self.next_id
+      @id ||= -1
+      @id += 1
     end
 
     def encode
-      [10+data.length, id, type, data].pack("l<l<l<A#{data.length}xx")
+      [10 + data.length, id, type, data].pack("l<l<l<A#{data.length}xx")
     end
 
-    def self.auth password
+    def self.auth(password)
       new type: 3, data: password
     end
 
-    def self.command cmd
+    def self.command(cmd)
       new type: 2, data: cmd
     end
 
-    def self.decode raw
+    def self.decode(raw)
       raw = raw.to_s
       fields = raw.unpack("l<l<Z*x")
 
@@ -33,4 +37,3 @@ class Zrcon
     end
   end
 end
-

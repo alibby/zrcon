@@ -15,12 +15,12 @@ options = OpenStruct.new(
   password: ENV['RCON_PASSWORD']
 )
 
-OptionParser.new { |opts|
+OptionParser.new do |opts|
   opts.banner = "Usage: zrcon..."
   opts.on("-hHOSTNAME", "--host=HOSTNAME", "hostname of rcon server") { |value| options.host = value }
   opts.on("-pPORT", "--port=PORT", "tcp port") { |value| options.port = value.to_i }
   opts.on("-PPASS", "--password=PASS", "rcon password") { |value| options.password = value }
-}.parse!
+end.parse!
 
 begin
   rcon = Zrcon.new options.to_h
@@ -30,4 +30,3 @@ begin
 rescue Zrcon::ConnectError => e
   puts "Connect error: #{e}"
 end
-

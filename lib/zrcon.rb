@@ -32,20 +32,19 @@ class Zrcon
   def conn
     @conn ||= TCPSocket.new host, port
   rescue SocketError
-    raise ConnectError.new "bad hostname perhaps? (#{host})"
+    raise ConnectError, "bad hostname perhaps? (#{host})"
   rescue Errno::ETIMEDOUT
-    raise ConnectError.new "timed out connecting to #{host}:#{port}"
+    raise ConnectError, "timed out connecting to #{host}:#{port}"
   rescue Errno::ECONNREFUSED
-    raise ConnectError.new "connection refused"
+    raise ConnectError, "connection refused"
   end
-
 
   def next_id
     @id ||= 0
     @id += 1
   end
 
-  def send packet
+  def send(packet)
     conn.write packet.encode
   end
 
