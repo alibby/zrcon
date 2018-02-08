@@ -16,10 +16,14 @@ options = OpenStruct.new(
 )
 
 OptionParser.new do |opts|
-  opts.banner = "Usage: zrcon..."
-  opts.on("-hHOSTNAME", "--host=HOSTNAME", "hostname of rcon server") { |value| options.host = value }
+  opts.banner = "Usage: zrcon ..."
+  opts.on("-HHOSTNAME", "--host=HOSTNAME", "hostname of rcon server") { |value| options.host = value }
   opts.on("-pPORT", "--port=PORT", "tcp port") { |value| options.port = value.to_i }
   opts.on("-PPASS", "--password=PASS", "rcon password") { |value| options.password = value }
+  opts.on("-h", "--help") do
+    puts opts.help()
+    exit
+  end
 end.parse!
 
 begin
