@@ -1,0 +1,20 @@
+
+Metrics/LineLength:
+  Description: 'Limit lines to 120 characters.'
+  StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#80-character-limits'
+  Enabled: true
+  Max: 120
+
+Style/StringLiterals:
+  Description: 'Checks if uses of quotes match the configured preference.'
+  StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#consistent-string-literals'
+  Enabled: false
+
+Style/Documentation:
+  Description: 'Document classes and non-namespace modules.'
+  Enabled: false
+
+Metrics/BlockLength:
+  Description: 'Avoid blocks longer than 250 lines of code.'
+  Enabled: true
+  Max: 250
