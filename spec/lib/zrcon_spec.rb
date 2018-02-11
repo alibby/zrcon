@@ -1,11 +1,6 @@
 require "spec_helper"
 
 describe Zrcon do
-  def expect_send_receive
-    expect(rcon).to receive(:send)
-    expect(rcon).to receive(:receive).and_return(response)
-  end
-
   before do
     ENV['RCON_HOST'] = 'joe'
     ENV['RCON_PORT'] = '666'
@@ -21,6 +16,7 @@ describe Zrcon do
         expect(subject.host).to eq 'joe'
         expect(subject.port).to eq 666
         expect(subject.password).to eq 'supersecret'
+        expect(subject.id).to eq 0
       end
     end
 
@@ -67,6 +63,11 @@ describe Zrcon do
     end
   end
 
+  def expect_send_receive
+    expect(rcon).to receive(:send)
+    expect(rcon).to receive(:receive).and_return(response)
+  end
+
   describe '#auth' do
     subject { rcon.auth }
 
@@ -91,13 +92,61 @@ describe Zrcon do
   end
 
   describe '#command' do
-    subject { rcon.command "list" }
+    let(:command) { "list" }
+
+    let(:encoded_request) do
+      Zrcon::Packet.new(id: 1, type: 2, data: command).encode
+    end
+
+    let(:conn) { StringIO.new }
+
+    before {
+      expect(rcon).to receive(:conn).at_least(:once).and_return(conn)
+      expect(conn).to receive(:write).with(encoded_request).and_return encoded_request.length
+
+      expect(conn).to receive(:read)
+        .with(4)
+        .and_return([encoded_response.length-4].pack('l<'))
+
+      expect(conn).to receive(:read).with(encoded_response.length-4).and_return(encoded_response[4..-1])
+    }
+
+    subject { rcon.command command }
 
     context "when the connection has not been authenticated" do
-      before { expect_send_receive }
-      let(:response) { not_authenticated_response }
+      let(:encoded_response) do
+        Zrcon::Packet.new(id: -1, type: 2, data: "").encode
+      end
 
       it { should be_nil }
+    end
+
+    context "when the connection has been authenticated" do
+      let(:response) { "list response" }
+
+      let(:encoded_response) do
+        Zrcon::Packet.new(id: 1, type: 2, data: response).encode
+      end
+
+      it { should eq response }
+    end
+  end
+
+  describe "auth_packet" do
+    subject { rcon.auth_packet("password") }
+
+    it "should create a packet" do
+      expect(Zrcon::Packet).to receive(:new).with(id: 1, type: 3, data: "password")
+      subject
+    end
+  end
+
+  describe "command_packet" do
+    subject { rcon.command_packet "help" }
+
+    it "should create a packet" do
+      expect(Zrcon::Packet).to receive(:new).with(id: 1, type: 2, data: "help")
+      subject
     end
   end
 end

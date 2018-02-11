@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    zrcon (0.0.3)
+    zrcon (0.0.4)
       dotenv (~> 2.2)
 
 GEM

@@ -2,10 +2,10 @@ require "spec_helper"
 
 describe Zrcon::Packet do
   describe '#initialize' do
+    let(:id) { 1234 }
+
     context "defaults" do
-      it "should set the id to zero" do
-        expect(subject.id).to eq 0
-      end
+      subject { described_class.new id: id }
 
       it "should set the type to 2" do
         expect(subject.type).to eq 2
@@ -16,18 +16,7 @@ describe Zrcon::Packet do
       end
     end
 
-    context "subsequent constructor calls" do
-      before do
-        described_class.instance_variable_set :@id, -1
-      end
-
-      it "should increment the id" do
-        expect(subject.id).to eq 0
-      end
-    end
-
     context "when passed options" do
-      let(:id) { 1234 }
       let(:type) { 3 }
       let(:data) { "data" }
 
@@ -43,28 +32,6 @@ describe Zrcon::Packet do
 
       it "should set the data" do
         expect(subject.data).to eq data
-      end
-    end
-
-    describe "::auth" do
-      subject { described_class.auth "password" }
-
-      it "should create a packet" do
-        expect(described_class)
-          .to receive(:new)
-          .with(type: 3, data: "password")
-        subject
-      end
-    end
-
-    describe "::command" do
-      subject { described_class.command "help" }
-
-      it "should create a packet" do
-        expect(described_class)
-          .to receive(:new)
-          .with(type: 2, data: "help")
-        subject
       end
     end
 
